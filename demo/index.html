@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soundonika Demo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #111;
+            color: #eee;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        select, input[type="range"], button {
+            font-size: 1rem;
+            margin: 0.25rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        .btn-group {
+            margin: 1rem 0;
+        }
+
+        .status {
+            margin-top: 1rem;
+            font-style: italic;
+            color: #8f8;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<h1>🧃 Soundonika Demo</h1>
+<p>Minimal audio engine test UI. Requires user interaction to start audio.</p>
+
+<div>
+    <button id="init">🔊 Init Audio Engine</button>
+    <span class="status" id="status">Not started</span>
+</div>
+
+<label for="soundMode">Sound Mode:</label>
+<select id="soundMode">
+    <option value="clicks">Click Sounds</option>
+    <option value="samples">Drum Samples</option>
+</select>
+
+<label for="volume">Volume:</label>
+<input type="range" id="volume" min="0" max="1" step="0.1" value="0.7" />
+
+<div class="btn-group">
+    <button data-sound="kick">Kick</button>
+    <button data-sound="snare">Snare</button>
+    <button data-sound="hihat_closed">Hi-Hat</button>
+    <button data-sound="perc">Perc</button>
+    <button data-sound="shaker">Shaker</button>
+</div>
+
+<script src="../js/soundonika.js"></script>
+<script>
+    let ctx, engine;
+
+    const statusText = document.getElementById("status");
+    const initBtn = document.getElementById("init");
+    const modeSel = document.getElementById("soundMode");
+    const volInput = document.getElementById("volume");
+
+    initBtn.addEventListener("click", async () => {
+        ctx = new AudioContext();
+        engine = new Soundonika.Engine(ctx);
+        await engine.init();
+
+        modeSel.value = engine.getSoundMode();
+        volInput.value = engine.getVolume();
+
+        statusText.textContent = "Audio engine ready";
+    });
+
+    modeSel.addEventListener("change", async () => {
+        if (!engine) return;
+        statusText.textContent = "Loading...";
+        try {
+            await engine.setSoundMode(modeSel.value);
+            statusText.textContent = modeSel.value === 'samples' ? "Samples loaded" : "Click mode";
+        } catch (e) {
+            statusText.textContent = "Error loading samples";
+        }
+    });
+
+    volInput.addEventListener("input", () => {
+        if (!engine) return;
+        engine.setVolume(parseFloat(volInput.value));
+    });
+
+    document.querySelectorAll("button[data-sound]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (!engine || !ctx) return;
+            const time = ctx.currentTime + 0.05;
+            const sound = btn.getAttribute("data-sound");
+            engine.scheduleSound(time, sound);
+        });
+    });
+</script>
+</body>
+</html>
