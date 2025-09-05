@@ -13,12 +13,12 @@ class SoundonikaEngine {
         this.loadingPromise = null;
 
         this.sampleConfig = {
-            kick: '../samples/percussion/DopeDrumsVol5/DD5_Kick_01.wav',
-            snare: '../samples/percussion/DopeDrumsVol5/DD5_Snare_01.wav',
-            hihat_closed: '../samples/percussion/DopeDrumsVol5/DD5_CH_01.wav',
-            hihat_open: '../samples/percussion/DopeDrumsVol5/DD5_OH_01.wav',
-            perc: '../samples/percussion/DopeDrumsVol5/DD5_Perc_01.wav',
-            shaker: '../samples/percussion/DopeDrumsVol5/DD5_Shk_01.wav'
+            kick: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_Kick_01.wav',
+            snare: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_Snare_01.wav',
+            hihat_closed: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_CH_01.wav',
+            hihat_open: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_OH_01.wav',
+            perc: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_Perc_01.wav',
+            shaker: 'https://cdn.jsdelivr.net/gh/aa-parky/soundonika@main/samples/percussion/DopeDrumsVol5/DD5_Shk_01.wav'
         };
     }
 
