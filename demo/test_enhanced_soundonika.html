@@ -66,7 +66,7 @@
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #8f8, #4a4);
-            width: 0%;
+            width: 0;
             transition: width 0.3s ease;
         }
 
@@ -92,10 +92,6 @@
             transition: background 0.1s ease;
         }
 
-        .beat.active {
-            background: #8f8;
-            color: #111;
-        }
     </style>
 </head>
 <body>
@@ -277,7 +273,7 @@
             scheduleStatus.textContent = 'Playing scheduled sequence...';
             
             const startTime = ctx.currentTime + 0.1;
-            const interval = 0.5; // 500ms between sounds
+            const interval = 0.5; // 500 ms between sounds
 
             // Schedule a sequence: kick, snare, hihat, snare
             engine.scheduleSound(startTime, 'kick', 1.0);
@@ -319,7 +315,7 @@
             scheduleStatus.textContent = 'Testing precision timing...';
             
             const startTime = ctx.currentTime + 0.1;
-            const interval = 0.1; // 100ms - very tight timing
+            const interval = 0.1; // 100 ms - very tight timing
 
             // Schedule 10 rapid-fire sounds
             for (let i = 0; i < 10; i++) {
@@ -391,7 +387,7 @@
                 statsDisplay.innerHTML = `
                     Loaded Samples: 0<br>
                     Audio Context State: not created<br>
-                    Current Time: 0.000s
+                    Current Time: 0.000 s
                 `;
                 return;
             }
