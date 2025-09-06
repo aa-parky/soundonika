@@ -16,11 +16,6 @@ class SoundonikaEngine {
     setVolume(vol) {
         this.volume = vol;
     }
-
-    getVolume() {
-        return this.volume;
-    }
-
     setSoundMode(mode) {
         this.mode = mode;
     }

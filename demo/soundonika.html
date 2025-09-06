@@ -147,8 +147,8 @@
 
                 availableSamples.forEach(sample => {
                     const option = document.createElement('option');
-                    option.value = sample;
-                    option.textContent = sample;
+                    option.value = String(sample);
+                    option.textContent = String(sample);
                     if (sample === defaultSampleMap[key].filename) {
                         option.selected = true;
                     }
