@@ -17,9 +17,6 @@ class SoundonikaEngine {
         this.mode = 'samples';
         this.isInitialized = false;
         this.loadingProgress = 0;
-
-        // Legacy samples Map (kept for compatibility)
-        this.samples = new Map();
     }
 
     // ===== INITIALIZATION METHODS =====
@@ -292,10 +289,10 @@ class SoundonikaEngine {
         return this.mode;
     }
 
-    // ===== SAMPLE MANAGEMENT METHODS (Legacy compatibility) =====
-    // NOTE: The demo uses these methods, so they're not actually "unused"
+    // ===== SAMPLE MANAGEMENT METHODS =====
+    // NOTE: The demo uses these methods for immediate HTML5 Audio playback
     previewSample(category, pack, filename) {
-        // For demo compatibility - uses HTML5 Audio for immediate playback
+        // For demo purposes - uses HTML5 Audio for immediate playback
         const url = `${this.sampleBasePath}/${category}/${pack}/${filename}`;
         const audio = new Audio(url);
         audio.volume = this.volume;
@@ -304,11 +301,6 @@ class SoundonikaEngine {
         }).catch(error => {
             console.warn('Failed to preview sample:', error);
         });
-    }
-
-    // Legacy method for backward compatibility
-    playClickSound(name) {
-        this.scheduleClickSound(this.audioContext.currentTime, name, 1.0);
     }
 
     // ===== UTILITY METHODS =====
