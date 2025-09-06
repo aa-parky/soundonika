@@ -92,7 +92,7 @@
         engine.setVolume(parseFloat(volInput.value));
         engine.setSoundMode(modeSel.value);
 
-        setupButtons();
+        await setupButtons();
         statusText.textContent = "Audio engine ready";
     });
 
@@ -113,7 +113,7 @@
         buttonGroup.innerHTML = '';
         const isSampleMode = engine.getSoundMode() === 'samples';
 
-        // Fetch samples from fixed category/pack
+        // Fetch samples from a fixed category /pack
         const category = 'percussion';
         const pack = 'DopeDrumsVol5';
         const availableSamples = engine.getSamplesForPack(category, pack);
