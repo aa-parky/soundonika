@@ -6,6 +6,22 @@ It is intentionally **headless** — there is no UI, styling, or layout. That’
 
 ---
 
+## 🎛️ The Curated Tonika Frontend
+
+Tonika includes a default browser-based UI that brings together a suite of `*onika` tools. These modules can be used independently or as part of the curated experience.
+
+| Module                                                   | Description                                                  |
+|----------------------------------------------------------|--------------------------------------------------------------|
+| 🎹 [Clavonika](https://github.com/aa-parky/clavonika)    | An 88-key interactive MIDI piano keyboard.                   |
+| 🎚️ [Midonika](https://github.com/aa-parky/midonika)     | Visualize and debug live MIDI input/output messages.         |
+| 🔌 [Jackonika](https://github.com/aa-parky/jackonika)    | Your MIDI patchbox: listens, connects, and routes.           |
+| 🎙️ [Catchonika](https://github.com/aa-parky/catchonika) | Always listening—capture spontaneous ideas and takes.        |
+| 🎼 [Chordonika](https://github.com/aa-parky/chordonika)  | Explore chords, visualize voicings, find that special sound. |
+| 🥁 [Rhythonika](https://github.com/aa-parky/rhythonika)  | Smart metronome and rhythm trainer with creative patterns.   |
+
+Each of these modules is being developed to work independently or within the **Tonika rack**.
+
+
 ## 🎯 Philosophy
 
 ### ✅ What Soundonika *is*:
