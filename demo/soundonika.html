@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<!--suppress CssUnusedSymbol, CssRedundantUnit -->
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soundonika Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Soundonika Test</title>
     <style>
         body {
             font-family: sans-serif;
@@ -14,158 +15,411 @@
         }
 
         h1 {
-            font-size: 1.6rem;
+            color: #8f8;
             margin-bottom: 0.5rem;
         }
 
-        select, input[type="range"], button {
-            font-size: 1rem;
-            margin: 0.25rem;
-            padding: 0.4rem 0.6rem;
+        .section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 8px;
         }
 
-        .btn-group {
-            margin: 1rem 0;
+        button {
+            font-size: 1rem;
+            margin: 0.25rem;
+            padding: 0.6rem 1rem;
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        button:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
         }
 
         .status {
-            margin-top: 1rem;
-            font-style: italic;
-            color: #8f8;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: #222;
+            border-radius: 4px;
+            font-family: monospace;
         }
 
-        label {
-            display: block;
-            margin-top: 1rem;
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #8f8, #4a4);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin: 0 1rem;
+        }
+
+        .timing-demo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .beat {
+            height: 40px;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.1s ease;
+        }
+
+        .beat.active {
+            background: #8f8;
+            color: #111;
         }
     </style>
 </head>
 <body>
-<h1>🧃 Soundonika Demo</h1>
-<p>Minimal audio engine test UI. Requires user interaction to start audio.</p>
+<h1>🧃 Enhanced Soundonika Test Suite</h1>
+<p>Testing the new WebAudio-based scheduling architecture</p>
 
-<div>
-    <button id="init">🔊 Init Audio Engine</button>
-    <span class="status" id="status">Not started</span>
+<!-- Initialization Section -->
+<div class="section">
+    <h2>🚀 Initialization</h2>
+    <button id="initBtn">Initialize Engine</button>
+    <div class="status" id="initStatus">Not initialized</div>
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
 </div>
 
-<label for="soundMode">Sound Mode:</label>
-<select id="soundMode">
-    <option value="clicks">Click Sounds</option>
-    <option value="samples">Drum Samples</option>
-</select>
+<!-- Basic Controls -->
+<div class="section">
+    <h2>🎛️ Basic Controls</h2>
+    <label>
+        Volume: <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.8">
+        <span id="volumeDisplay">0.8</span>
+    </label>
+    <br><br>
+    <label>
+        Mode:
+        <select id="modeSelect">
+            <option value="samples">Samples</option>
+            <option value="clicks">Clicks</option>
+        </select>
+    </label>
+</div>
 
-<label for="volume">Volume:</label>
-<input type="range" id="volume" min="0" max="1" step="0.1" value="0.7" />
+<!-- Immediate Playback -->
+<div class="section">
+    <h2>🎵 Immediate Playback</h2>
+    <button onclick="testSound('kick')">Kick</button>
+    <button onclick="testSound('snare')">Snare</button>
+    <button onclick="testSound('hihat_closed')">Hi-Hat Closed</button>
+    <button onclick="testSound('hihat_open')">Hi-Hat Open</button>
+    <button onclick="testSound('perc')">Perc</button>
+    <button onclick="testSound('shaker')">Shaker</button>
+</div>
 
+<!-- Scheduled Playback -->
+<div class="section">
+    <h2>⏰ Scheduled Playback</h2>
+    <button onclick="testScheduledSequence()">Play Scheduled Sequence</button>
+    <button onclick="testVelocityDemo()">Velocity Demo</button>
+    <button onclick="testPrecisionTiming()">Precision Timing Test</button>
+    <div class="status" id="scheduleStatus">Ready for scheduling tests</div>
+</div>
 
+<!-- Rhythm Demo -->
+<div class="section">
+    <h2>🥁 Rhythm Demo</h2>
+    <button onclick="startMetronome()">Start Metronome</button>
+    <button onclick="stopMetronome()">Stop Metronome</button>
+    <label>
+        BPM: <input type="range" id="bpmSlider" min="60" max="180" value="120">
+        <span id="bpmDisplay">120</span>
+    </label>
+    <div class="timing-demo">
+        <div class="beat" id="beat1">1</div>
+        <div class="beat" id="beat2">2</div>
+        <div class="beat" id="beat3">3</div>
+        <div class="beat" id="beat4">4</div>
+    </div>
+</div>
 
-
-
-<div class="btn-group" id="buttonGroup"></div>
+<!-- Performance Stats -->
+<div class="section">
+    <h2>📊 Performance Stats</h2>
+    <div class="status" id="statsDisplay">
+        Loaded Samples: 0<br>
+        Audio Context State: suspended<br>
+        Current Time: 0.000s
+    </div>
+    <button onclick="updateStats()">Refresh Stats</button>
+</div>
 
 <script src="../js/soundonika.js"></script>
 <script>
-    let ctx, engine;
+    let engine = null;
+    let ctx = null;
+    let metronomeInterval = null;
+    let currentBeat = 0;
+    let isMetronomeRunning = false; // Track the metronome state
 
-    const statusText = document.getElementById("status");
-    const initBtn = document.getElementById("init");
-    const modeSel = document.getElementById("soundMode");
-    const volInput = document.getElementById("volume");
-    const buttonGroup = document.getElementById("buttonGroup");
+    // UI Elements
+    const initBtn = document.getElementById('initBtn');
+    const initStatus = document.getElementById('initStatus');
+    const progressBar = document.getElementById('progressBar');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeDisplay = document.getElementById('volumeDisplay');
+    const modeSelect = document.getElementById('modeSelect');
+    const scheduleStatus = document.getElementById('scheduleStatus');
+    const bpmSlider = document.getElementById('bpmSlider');
+    const bpmDisplay = document.getElementById('bpmDisplay');
+    const statsDisplay = document.getElementById('statsDisplay');
 
-    const defaultSampleMap = {
-        kick: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_Kick_01.wav" },
-        snare: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_Bones.wav" },
-        hihat_closed: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_01.wav" },
-        perc: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_06.wav" },
-        shaker: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_12.wav" },
-    };
+    // Initialize engine
+    initBtn.addEventListener('click', async () => {
+        try {
+            initBtn.disabled = true;
+            initStatus.textContent = 'Initializing...';
 
-    const buttonOrder = Object.keys(defaultSampleMap);
+            ctx = new AudioContext();
+            engine = new SoundonikaEngine(ctx);
 
-    initBtn.addEventListener("click", async () => {
-        ctx = new AudioContext();
-        engine = new SoundonikaEngine(ctx);
+            // Monitor loading progress
+            const progressInterval = setInterval(() => {
+                const progress = engine.getLoadingProgress();
+                progressBar.style.width = (progress * 100) + '%';
 
-        await engine.loadSampleIndex();
-        engine.setVolume(parseFloat(volInput.value));
-        engine.setSoundMode(modeSel.value);
-
-        await setupButtons();
-        statusText.textContent = "Audio engine ready";
-    });
-
-    modeSel.addEventListener("change", () => {
-        if (!engine) return;
-        const mode = modeSel.value;
-        engine.setSoundMode(mode);
-        setupButtons(); // Refresh UI based on mode
-        statusText.textContent = `Switched to ${mode}`;
-    });
-
-    volInput.addEventListener("input", () => {
-        if (!engine) return;
-        engine.setVolume(parseFloat(volInput.value));
-    });
-
-    async function setupButtons() {
-        buttonGroup.innerHTML = '';
-        const isSampleMode = engine.getSoundMode() === 'samples';
-
-        // Fetch samples from a fixed category /pack
-        const category = 'percussion';
-        const pack = 'DopeDrumsVol5';
-        const availableSamples = engine.getSamplesForPack(category, pack);
-
-        buttonOrder.forEach(key => {
-            const row = document.createElement('div');
-            row.style.marginBottom = '0.5rem';
-
-            const btn = document.createElement('button');
-            btn.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            btn.dataset.sound = key;
-            btn.onclick = () => {
-                if (!engine || !ctx) return;
-                const sound = btn.dataset.sound;
-
-                if (engine.getSoundMode() === 'samples') {
-                    const mapping = defaultSampleMap[sound];
-                    if (mapping) {
-                        engine.previewSample(mapping.category, mapping.pack, mapping.filename);
-                    }
-                } else {
-                    engine.playClickSound(sound);
+                if (progress >= 1) {
+                    clearInterval(progressInterval);
                 }
-            };
-            row.appendChild(btn);
+            }, 100);
 
-            // Dropdown (only in sample mode)
-            if (isSampleMode) {
-                const select = document.createElement('select');
-                select.style.marginLeft = '0.5rem';
+            await engine.init();
 
-                availableSamples.forEach(sample => {
-                    const option = document.createElement('option');
-                    option.value = String(sample);
-                    option.textContent = String(sample);
-                    if (sample === defaultSampleMap[key].filename) {
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
+            initStatus.textContent = 'Engine initialized successfully!';
+            initStatus.style.color = '#8f8';
 
-                select.onchange = () => {
-                    defaultSampleMap[key].filename = select.value;
-                };
+            // Enable controls
+            enableControls();
+            updateStats();
 
-                row.appendChild(select);
+        } catch (error) {
+            initStatus.textContent = `Initialization failed: ${error.message}`;
+            initStatus.style.color = '#f88';
+            initBtn.disabled = false;
+        }
+    });
+
+    // Volume control
+    volumeSlider.addEventListener('input', () => {
+        const volume = parseFloat(volumeSlider.value);
+        volumeDisplay.textContent = volume.toFixed(1);
+        if (engine) {
+            engine.setVolume(volume);
+        }
+    });
+
+    // Mode control
+    modeSelect.addEventListener('change', () => {
+        if (engine) {
+            engine.setSoundMode(modeSelect.value);
+        }
+    });
+
+    // BPM control - FIXED: Now restarts metronome if running
+    bpmSlider.addEventListener('input', () => {
+        bpmDisplay.textContent = bpmSlider.value;
+
+        // If metronome is running, restart it with new BPM
+        if (isMetronomeRunning) {
+            stopMetronome();
+            startMetronome();
+        }
+    });
+
+    function enableControls() {
+        volumeSlider.disabled = false;
+        modeSelect.disabled = false;
+        bpmSlider.disabled = false;
+    }
+
+    // Test functions
+    function testSound(soundType) {
+        if (!engine || !engine.isReady()) {
+            alert('Engine not initialized. Click "Initialize Engine" first.');
+            return;
+        }
+
+        engine.scheduleSound(ctx.currentTime, soundType, 1.0);
+    }
+
+    function testScheduledSequence() {
+        if (!engine || !engine.isReady()) {
+            alert('Engine not initialized.');
+            return;
+        }
+
+        scheduleStatus.textContent = 'Playing scheduled sequence...';
+
+        const startTime = ctx.currentTime + 0.1;
+        const interval = 0.5; // 500 ms between sounds
+
+        // Schedule a sequence: kick, snare, hihat, snare
+        engine.scheduleSound(startTime, 'kick', 1.0);
+        engine.scheduleSound(startTime + interval, 'snare', 0.8);
+        engine.scheduleSound(startTime + interval * 2, 'hihat_closed', 0.6);
+        engine.scheduleSound(startTime + interval * 3, 'snare', 0.8);
+
+        setTimeout(() => {
+            scheduleStatus.textContent = 'Sequence complete';
+        }, interval * 4 * 1000);
+    }
+
+    function testVelocityDemo() {
+        if (!engine || !engine.isReady()) {
+            alert('Engine not initialized.');
+            return;
+        }
+
+        scheduleStatus.textContent = 'Playing velocity demo...';
+
+        const startTime = ctx.currentTime + 0.1;
+        const velocities = [0.2, 0.4, 0.6, 0.8, 1.0];
+
+        velocities.forEach((velocity, index) => {
+            engine.scheduleSound(startTime + index * 0.3, 'kick', velocity);
+        });
+
+        setTimeout(() => {
+            scheduleStatus.textContent = 'Velocity demo complete';
+        }, velocities.length * 300);
+    }
+
+    function testPrecisionTiming() {
+        if (!engine || !engine.isReady()) {
+            alert('Engine not initialized.');
+            return;
+        }
+
+        scheduleStatus.textContent = 'Testing precision timing...';
+
+        const startTime = ctx.currentTime + 0.1;
+        const interval = 0.1; // 100 ms - very tight timing
+
+        // Schedule 10 rapid-fire sounds
+        for (let i = 0; i < 10; i++) {
+            engine.scheduleSound(startTime + i * interval, 'hihat_closed', 0.7);
+        }
+
+        setTimeout(() => {
+            scheduleStatus.textContent = 'Precision timing test complete';
+        }, 10 * interval * 1000);
+    }
+
+    function startMetronome() {
+        if (!engine || !engine.isReady()) {
+            alert('Engine not initialized.');
+            return;
+        }
+
+        if (metronomeInterval) {
+            stopMetronome();
+        }
+
+        const bpm = parseInt(bpmSlider.value);
+        const interval = 60 / bpm; // seconds per beat
+
+        currentBeat = 0;
+        isMetronomeRunning = true; // Set a running state
+
+        metronomeInterval = setInterval(() => {
+            const now = ctx.currentTime;
+
+            // Schedule the sound slightly ahead for precision
+            if (currentBeat % 4 === 0) {
+                engine.scheduleSound(now + 0.01, 'accent', 1.0);
+            } else {
+                engine.scheduleSound(now + 0.01, 'normal', 0.7);
             }
 
-            buttonGroup.appendChild(row);
-        });
-    }
-</script>
+            // Update visual indicator
+            updateBeatIndicator();
+            currentBeat++;
 
+        }, interval * 1000);
+    }
+
+    function stopMetronome() {
+        if (metronomeInterval) {
+            clearInterval(metronomeInterval);
+            metronomeInterval = null;
+            isMetronomeRunning = false; // Clear running state
+
+            // Clear beat indicators
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`beat${i}`).classList.remove('active');
+            }
+        }
+    }
+
+    function updateBeatIndicator() {
+        // Clear all beats
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`beat${i}`).classList.remove('active');
+        }
+
+        // Highlight current beat
+        const beatNumber = (currentBeat % 4) + 1;
+        document.getElementById(`beat${beatNumber}`).classList.add('active');
+    }
+
+    function updateStats() {
+        if (!engine || !ctx) {
+            statsDisplay.innerHTML = `
+                    Loaded Samples: 0<br>
+                    Audio Context State: not created<br>
+                    Current Time: 0.000s
+                `;
+            return;
+        }
+
+        statsDisplay.innerHTML = `
+                Loaded Samples: ${engine.getLoadedSampleCount()}<br>
+                Audio Context State: ${ctx.state}<br>
+                Current Time: ${ctx.currentTime.toFixed(3)}s<br>
+                Engine Ready: ${engine.isReady()}<br>
+                Current Mode: ${engine.getSoundMode()}<br>
+                Volume: ${engine.getVolume().toFixed(2)}<br>
+                Metronome: ${isMetronomeRunning ? 'Running' : 'Stopped'}<br>
+                BPM: ${bpmSlider.value}
+            `;
+    }
+
+    // Auto-update stats every second
+    setInterval(updateStats, 1000);
+</script>
 </body>
 </html>

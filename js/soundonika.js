@@ -66,12 +66,15 @@ class SoundonikaEngine {
         try {
             const response = await fetch(`${this.sampleBasePath}/sample-index.json`);
             if (!response.ok) {
-                throw new Error(`Failed to load sample index: ${response.status}`);
+                console.warn(`Failed to load sample index: HTTP ${response.status}. Engine will use fallback click sounds.`);
+                this.sampleIndex = {}; // Empty index as a fallback
+                return;
             }
             this.sampleIndex = await response.json();
         } catch (error) {
-            console.error('Error loading sample index:', error);
-            throw error;
+            console.warn('Error loading sample index:', error.message, 'Engine will use fallback click sounds.');
+            this.sampleIndex = {}; // Empty index as fallback
+            // Don't re-throw - allow engine to continue with limited functionality
         }
     }
 
@@ -80,23 +83,37 @@ class SoundonikaEngine {
         let totalSamples = 0;
         let loadedSamples = 0;
 
+        // Check if the sample index is available and valid
+        if (!this.sampleIndex || typeof this.sampleIndex !== 'object') {
+            console.warn('No valid sample index available, skipping sample preloading');
+            return;
+        }
+
         // Count total samples for progress tracking
-        for (const [category, packs] of Object.entries(this.sampleIndex)) {
-            for (const [pack, samples] of Object.entries(packs)) {
-                totalSamples += samples.length;
+        for (const [, packs] of Object.entries(this.sampleIndex)) {
+            if (packs && typeof packs === 'object') {
+                for (const [, samples] of Object.entries(packs)) {
+                    if (Array.isArray(samples)) {
+                        totalSamples += samples.length;
+                    }
+                }
             }
         }
 
         // Load samples from each pack
         for (const [category, packs] of Object.entries(this.sampleIndex)) {
-            for (const [pack, samples] of Object.entries(packs)) {
-                for (const sample of samples) {
-                    const promise = this.loadSample(category, pack, sample)
-                        .then(() => {
-                            loadedSamples++;
-                            this.loadingProgress = loadedSamples / totalSamples;
-                        });
-                    loadPromises.push(promise);
+            if (packs && typeof packs === 'object') {
+                for (const [pack, samples] of Object.entries(packs)) {
+                    if (Array.isArray(samples)) {
+                        for (const sample of samples) {
+                            const promise = this.loadSample(category, pack, sample)
+                                .then(() => {
+                                    loadedSamples++;
+                                    this.loadingProgress = loadedSamples / totalSamples;
+                                });
+                            loadPromises.push(promise);
+                        }
+                    }
                 }
             }
         }
@@ -111,7 +128,8 @@ class SoundonikaEngine {
         try {
             const response = await fetch(url);
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                console.warn(`Failed to load sample: ${url} - HTTP ${response.status}`);
+                return;
             }
 
             const arrayBuffer = await response.arrayBuffer();
@@ -187,9 +205,8 @@ class SoundonikaEngine {
         // Configure the source
         source.buffer = audioBuffer;
 
-        // Apply velocity curve (exponential for more natural feel)
-        const gain = Math.pow(velocity, 2) * this.volume;
-        gainNode.gain.value = gain;
+        // Apply a velocity curve (exponential for a more natural feel)
+        gainNode.gain.value = Math.pow(velocity, 2) * this.volume;
 
         // Connect: source → gain → master → destination
         source.connect(gainNode);
@@ -234,8 +251,8 @@ class SoundonikaEngine {
         osc.type = soundType === 'kick' || soundType === 'accent' ? 'sine' : 'square';
 
         // Apply velocity and volume
-        const gainValue = Math.pow(velocity, 2) * this.volume * 0.1; // Lower volume for clicks
-        gain.gain.value = gainValue;
+         // Lower volume for clicks
+        gain.gain.value = Math.pow(velocity, 2) * this.volume * 0.1;
 
         // Connect and schedule
         osc.connect(gain);
@@ -285,15 +302,6 @@ class SoundonikaEngine {
     }
 
     // ===== SAMPLE MANAGEMENT METHODS (Legacy compatibility) =====
-
-    getAvailableSampleCategories() {
-        return Object.keys(this.sampleIndex);
-    }
-
-    getSamplePacksForCategory(category) {
-        return this.sampleIndex[category] ? Object.keys(this.sampleIndex[category]) : [];
-    }
-
     getSamplesForPack(category, pack) {
         if (this.sampleIndex[category] && this.sampleIndex[category][pack]) {
             return this.sampleIndex[category][pack];
@@ -334,14 +342,6 @@ class SoundonikaEngine {
     }
 
     // Update sound type mapping
-    setSoundTypeMapping(soundType, category, pack, filename) {
-        const key = this.generateSampleKey(category, pack, filename);
-        if (this.sampleBuffers.has(key)) {
-            this.soundTypeMap.set(soundType, key);
-        } else {
-            console.warn(`Sample not found: ${key}`);
-        }
-    }
 }
 
 // Export to global namespace for compatibility with existing documentation
