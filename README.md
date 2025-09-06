@@ -56,17 +56,17 @@ engine.previewSample("percussion", "DopeDrumsVol5", "DD5_Kick_01.wav");
 ## 🧠 API
 
 | Status | Method                                    | Description                                               |
-| :----: | ----------------------------------------- | --------------------------------------------------------- |
-|   ✅   | `new SoundonikaEngine(audioContext)`      | Creates a new engine instance.                            |
-|   ✅   | `async loadSampleIndex()`                 | Loads the sample index file.                              |
-|   ✅   | `setVolume(0–1)`                          | Sets the master output gain.                              |
-|   ✅   | `setSoundMode('clicks' or 'samples')`     | Switches the playback engine.                             |
-|   ✅   | `getSoundMode()`                          | Returns `'clicks'` or `'samples'`.                        |
-|   ✅   | `getAvailableSampleCategories()`          | Returns an array of sample categories.                    |
-|   ✅   | `getSamplePacksForCategory(category)`     | Returns an array of packs for a category.                 |
-|   ✅   | `getSamplesForPack(category, pack)`       | Returns an array of samples in a pack.                    |
-|   ✅   | `previewSample(category, pack, filename)` | Plays a sample using HTML5 Audio (for demo).              |
-|   ✅   | `playClickSound(name)`                    | Plays a fallback click sound.                             |
+|:------:|-------------------------------------------|-----------------------------------------------------------|
+|   ✅    | `new SoundonikaEngine(audioContext)`      | Creates a new engine instance.                            |
+|   ✅    | `async loadSampleIndex()`                 | Loads the sample index file.                              |
+|   ✅    | `setVolume(0–1)`                          | Sets the master output gain.                              |
+|   ✅    | `setSoundMode('clicks' or 'samples')`     | Switches the playback engine.                             |
+|   ✅    | `getSoundMode()`                          | Returns `'clicks'` or `'samples'`.                        |
+|   ✅    | `getAvailableSampleCategories()`          | Returns an array of sample categories.                    |
+|   ✅    | `getSamplePacksForCategory(category)`     | Returns an array of packs for a category.                 |
+|   ✅    | `getSamplesForPack(category, pack)`       | Returns an array of samples in a pack.                    |
+|   ✅    | `previewSample(category, pack, filename)` | Plays a sample using HTML5 Audio (for demo).              |
+|   ✅    | `playClickSound(name)`                    | Plays a fallback click sound.                             |
 |   ⬜️   | `init()`                                  | **TBI**: Loads samples into memory for WebAudio playback. |
 |   ⬜️   | `scheduleSound(time, type, velocity?)`    | **TBI**: Schedules a sound with precise timing.           |
 |   ⬜️   | `getVolume()`                             | **TBI**: Returns the current volume (float).              |
@@ -232,14 +232,14 @@ soundonika/
 
 Tonika includes a default browser-based UI that brings together a suite of `*onika` tools. These modules can be used independently or as part of the curated experience.
 
-| Module                                                  | Description                                                  |
-| ------------------------------------------------------- | ------------------------------------------------------------ |
-| 🎹 [Clavonika](https://github.com/aa-parky/clavonika)   | An 88-key interactive MIDI piano keyboard.                   |
+| Module                                                   | Description                                                  |
+|----------------------------------------------------------|--------------------------------------------------------------|
+| 🎹 [Clavonika](https://github.com/aa-parky/clavonika)    | An 88-key interactive MIDI piano keyboard.                   |
 | 🎚️ [Midonika](https://github.com/aa-parky/midonika)     | Visualize and debug live MIDI input/output messages.         |
-| 🔌 [Jackonika](https://github.com/aa-parky/jackonika)   | Your MIDI patchbox: listens, connects, and routes.           |
+| 🔌 [Jackonika](https://github.com/aa-parky/jackonika)    | Your MIDI patchbox: listens, connects, and routes.           |
 | 🎙️ [Catchonika](https://github.com/aa-parky/catchonika) | Always listening—capture spontaneous ideas and takes.        |
-| 🎼 [Chordonika](https://github.com/aa-parky/chordonika) | Explore chords, visualize voicings, find that special sound. |
-| 🥁 [Rhythonika](https://github.com/aa-parky/rhythonika) | Smart metronome and rhythm trainer with creative patterns.   |
+| 🎼 [Chordonika](https://github.com/aa-parky/chordonika)  | Explore chords, visualize voicings, find that special sound. |
+| 🥁 [Rhythonika](https://github.com/aa-parky/rhythonika)  | Smart metronome and rhythm trainer with creative patterns.   |
 
 Each of these modules is being developed to work independently or within the **Tonika rack**.
 
