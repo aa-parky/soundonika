@@ -58,13 +58,11 @@
 <label for="volume">Volume:</label>
 <input type="range" id="volume" min="0" max="1" step="0.1" value="0.7" />
 
-<div class="btn-group">
-    <button data-sound="kick">Kick</button>
-    <button data-sound="snare">Snare</button>
-    <button data-sound="hihat_closed">Hi-Hat</button>
-    <button data-sound="perc">Perc</button>
-    <button data-sound="shaker">Shaker</button>
-</div>
+
+
+
+
+<div class="btn-group" id="buttonGroup"></div>
 
 <script src="../js/soundonika.js"></script>
 <script>
@@ -74,27 +72,36 @@
     const initBtn = document.getElementById("init");
     const modeSel = document.getElementById("soundMode");
     const volInput = document.getElementById("volume");
+    const buttonGroup = document.getElementById("buttonGroup");
+
+    const defaultSampleMap = {
+        kick: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_Kick_01.wav" },
+        snare: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_Bones.wav" },
+        hihat_closed: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_01.wav" },
+        perc: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_06.wav" },
+        shaker: { category: "percussion", pack: "DopeDrumsVol5", filename: "DD5_CH_12.wav" },
+    };
+
+    const buttonOrder = Object.keys(defaultSampleMap);
 
     initBtn.addEventListener("click", async () => {
         ctx = new AudioContext();
-        engine = new Soundonika.Engine(ctx);
-        await engine.init();
+        engine = new SoundonikaEngine(ctx);
 
-        modeSel.value = engine.getSoundMode();
-        volInput.value = engine.getVolume();
+        await engine.loadSampleIndex();
+        engine.setVolume(parseFloat(volInput.value));
+        engine.setSoundMode(modeSel.value);
 
+        setupButtons();
         statusText.textContent = "Audio engine ready";
     });
 
-    modeSel.addEventListener("change", async () => {
+    modeSel.addEventListener("change", () => {
         if (!engine) return;
-        statusText.textContent = "Loading...";
-        try {
-            await engine.setSoundMode(modeSel.value);
-            statusText.textContent = modeSel.value === 'samples' ? "Samples loaded" : "Click mode";
-        } catch (e) {
-            statusText.textContent = "Error loading samples";
-        }
+        const mode = modeSel.value;
+        engine.setSoundMode(mode);
+        setupButtons(); // Refresh UI based on mode
+        statusText.textContent = `Switched to ${mode}`;
     });
 
     volInput.addEventListener("input", () => {
@@ -102,14 +109,63 @@
         engine.setVolume(parseFloat(volInput.value));
     });
 
-    document.querySelectorAll("button[data-sound]").forEach(btn => {
-        btn.addEventListener("click", () => {
-            if (!engine || !ctx) return;
-            const time = ctx.currentTime + 0.05;
-            const sound = btn.getAttribute("data-sound");
-            engine.scheduleSound(time, sound);
+    async function setupButtons() {
+        buttonGroup.innerHTML = '';
+        const isSampleMode = engine.getSoundMode() === 'samples';
+
+        // Fetch samples from fixed category/pack
+        const category = 'percussion';
+        const pack = 'DopeDrumsVol5';
+        const availableSamples = engine.getSamplesForPack(category, pack);
+
+        buttonOrder.forEach(key => {
+            const row = document.createElement('div');
+            row.style.marginBottom = '0.5rem';
+
+            const btn = document.createElement('button');
+            btn.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            btn.dataset.sound = key;
+            btn.onclick = () => {
+                if (!engine || !ctx) return;
+                const sound = btn.dataset.sound;
+
+                if (engine.getSoundMode() === 'samples') {
+                    const mapping = defaultSampleMap[sound];
+                    if (mapping) {
+                        engine.previewSample(mapping.category, mapping.pack, mapping.filename);
+                    }
+                } else {
+                    engine.playClickSound(sound);
+                }
+            };
+            row.appendChild(btn);
+
+            // Dropdown (only in sample mode)
+            if (isSampleMode) {
+                const select = document.createElement('select');
+                select.style.marginLeft = '0.5rem';
+
+                availableSamples.forEach(sample => {
+                    const option = document.createElement('option');
+                    option.value = sample;
+                    option.textContent = sample;
+                    if (sample === defaultSampleMap[key].filename) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+
+                select.onchange = () => {
+                    defaultSampleMap[key].filename = select.value;
+                };
+
+                row.appendChild(select);
+            }
+
+            buttonGroup.appendChild(row);
         });
-    });
+    }
 </script>
+
 </body>
 </html>
