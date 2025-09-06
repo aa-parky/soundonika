@@ -118,7 +118,7 @@ soundonika/
 
 ## 🎛 Demo
 
-Open [demo/index.html](demo/index.html) in a browser to test:
+Open [demo/index.html](demo/soundonika.html) in a browser to test:
 
 - Init engine
 - Switch sound modes
