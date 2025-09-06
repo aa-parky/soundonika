@@ -1,5 +1,5 @@
 class SoundonikaEngine {
-    constructor(audioContext) {
+    constructor(audioContext, options = {}) {
         this.audioContext = audioContext;
 
         // Audio graph nodes
@@ -8,13 +8,13 @@ class SoundonikaEngine {
 
         // Sample management
         this.sampleIndex = {};
-        this.sampleBasePath = '../samples';
+        this.sampleBasePath = options.sampleBasePath || '../samples';
         this.sampleBuffers = new Map(); // AudioBuffer cache
         this.soundTypeMap = new Map();  // Type → sample mapping
 
         // State management
-        this.volume = 0.8;
-        this.mode = 'samples';
+        this.volume = options.volume || 0.8;
+        this.mode = options.mode || 'samples';
         this.isInitialized = false;
         this.loadingProgress = 0;
     }
@@ -287,6 +287,22 @@ class SoundonikaEngine {
 
     getSoundMode() {
         return this.mode;
+    }
+
+    setSampleBasePath(path) {
+        this.sampleBasePath = path;
+        console.log(`Soundonika sample path set to: ${path}`);
+
+        // Clear existing sample buffers since path changed
+        this.sampleBuffers.clear();
+        this.soundTypeMap.clear();
+        this.isInitialized = false;
+
+        console.log('Sample buffers cleared. Call init() to reload samples from new path.');
+    }
+
+    getSampleBasePath() {
+        return this.sampleBasePath;
     }
 
     // ===== SAMPLE MANAGEMENT METHODS =====
