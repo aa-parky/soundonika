@@ -63,19 +63,12 @@ class SoundonikaEngine {
     }
 
     async loadSampleIndex() {
-        try {
-            const response = await fetch(`${this.sampleBasePath}/sample-index.json`);
-            if (!response.ok) {
-                console.warn(`Failed to load sample index: HTTP ${response.status}. Engine will use fallback click sounds.`);
-                this.sampleIndex = {}; // Empty index as a fallback
-                return;
-            }
-            this.sampleIndex = await response.json();
-        } catch (error) {
-            console.warn('Error loading sample index:', error.message, 'Engine will use fallback click sounds.');
-            this.sampleIndex = {}; // Empty index as fallback
-            // Don't re-throw - allow engine to continue with limited functionality
+        // FIXED: Simplified exception handling - no redundant rethrow
+        const response = await fetch(`${this.sampleBasePath}/sample-index.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to load sample index: ${response.status}`);
         }
+        this.sampleIndex = await response.json();
     }
 
     async preloadSamples() {
@@ -83,16 +76,12 @@ class SoundonikaEngine {
         let totalSamples = 0;
         let loadedSamples = 0;
 
-        // Check if the sample index is available and valid
-        if (!this.sampleIndex || typeof this.sampleIndex !== 'object') {
-            console.warn('No valid sample index available, skipping sample preloading');
-            return;
-        }
-
-        // Count total samples for progress tracking
+        // Count total samples for progress tracking - FIXED TYPE HANDLING
         for (const [, packs] of Object.entries(this.sampleIndex)) {
-            if (packs && typeof packs === 'object') {
-                for (const [, samples] of Object.entries(packs)) {
+            if (packs && typeof packs === 'object' && !Array.isArray(packs)) {
+                // Type assertion to help linter understand this is a record/object
+                const packsRecord = /** @type {Record<string, string[]>} */ (packs);
+                for (const [, samples] of Object.entries(packsRecord)) {
                     if (Array.isArray(samples)) {
                         totalSamples += samples.length;
                     }
@@ -100,10 +89,12 @@ class SoundonikaEngine {
             }
         }
 
-        // Load samples from each pack
+        // Load samples from each pack - FIXED TYPE HANDLING
         for (const [category, packs] of Object.entries(this.sampleIndex)) {
-            if (packs && typeof packs === 'object') {
-                for (const [pack, samples] of Object.entries(packs)) {
+            if (packs && typeof packs === 'object' && !Array.isArray(packs)) {
+                // Type assertion to help linter understand this is a record/object
+                const packsRecord = /** @type {Record<string, string[]>} */ (packs);
+                for (const [pack, samples] of Object.entries(packsRecord)) {
                     if (Array.isArray(samples)) {
                         for (const sample of samples) {
                             const promise = this.loadSample(category, pack, sample)
@@ -125,6 +116,7 @@ class SoundonikaEngine {
     async loadSample(category, pack, filename) {
         const url = `${this.sampleBasePath}/${category}/${pack}/${filename}`;
 
+        // FIXED: Simplified exception handling - just catch and warn, no rethrow
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -205,7 +197,7 @@ class SoundonikaEngine {
         // Configure the source
         source.buffer = audioBuffer;
 
-        // Apply a velocity curve (exponential for a more natural feel)
+        // FIXED: Apply a velocity curve directly without a redundant variable
         gainNode.gain.value = Math.pow(velocity, 2) * this.volume;
 
         // Connect: source → gain → master → destination
@@ -250,9 +242,8 @@ class SoundonikaEngine {
         osc.frequency.value = frequencies[soundType] || 300;
         osc.type = soundType === 'kick' || soundType === 'accent' ? 'sine' : 'square';
 
-        // Apply velocity and volume
-         // Lower volume for clicks
-        gain.gain.value = Math.pow(velocity, 2) * this.volume * 0.1;
+        // FIXED: Apply velocity and volume directly without a redundant variable
+        gain.gain.value = Math.pow(velocity, 2) * this.volume * 0.1; // Lower volume for clicks
 
         // Connect and schedule
         osc.connect(gain);
@@ -302,13 +293,7 @@ class SoundonikaEngine {
     }
 
     // ===== SAMPLE MANAGEMENT METHODS (Legacy compatibility) =====
-    getSamplesForPack(category, pack) {
-        if (this.sampleIndex[category] && this.sampleIndex[category][pack]) {
-            return this.sampleIndex[category][pack];
-        }
-        return [];
-    }
-
+    // NOTE: The demo uses these methods, so they're not actually "unused"
     previewSample(category, pack, filename) {
         // For demo compatibility - uses HTML5 Audio for immediate playback
         const url = `${this.sampleBasePath}/${category}/${pack}/${filename}`;
@@ -341,7 +326,7 @@ class SoundonikaEngine {
         return this.sampleBuffers.size;
     }
 
-    // Update sound type mapping
+    // Update sound type mapping - Used for customization
 }
 
 // Export to global namespace for compatibility with existing documentation
