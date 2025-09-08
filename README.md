@@ -54,67 +54,11 @@ engine.previewSample("percussion", "DopeDrumsVol5", "DD5_Kick_01.wav");
 ---
 
 ## 🧠 API
-
-| Status | Method                                    | Description                                        |
-|:------:|-------------------------------------------|----------------------------------------------------|
-|   ✅    | `new Soundonika.Engine(audioContext)`     | Creates a new engine instance.                     |
-|   ✅    | `async init()`                            | Loads samples into memory for WebAudio playback.   |
-|   ✅    | `async loadSampleIndex()`                 | Loads the sample index file.                       |
-|   ✅    | `setVolume(0–1)`                          | Sets the master output gain.                       |
-|   ✅    | `getVolume()`                             | Returns the current volume (float).                |
-|   ✅    | `setSoundMode('clicks' or 'samples')`     | Switches the playback engine.                      |
-|   ✅    | `getSoundMode()`                          | Returns `'clicks'` or `'samples'`.                 |
-|   ✅    | `scheduleSound(time, type, velocity?)`    | Schedules a sound with precise timing.             |
-|   ✅    | `previewSample(category, pack, filename)` | Plays a sample using HTML5 Audio (for demo).       |
-|   ✅    | `setSampleBasePath(path)`                 | Sets custom sample directory path.                 |
-|   ✅    | `getSampleBasePath()`                     | Returns current sample directory path.             |
-|   ⬜️   | `getAvailableSampleCategories()`          | **TBI**: Returns an array of sample categories.    |
-|   ⬜️   | `getSamplePacksForCategory(category)`     | **TBI**: Returns an array of packs for a category. |
-|   ⬜️   | `getSamplesForPack(category, pack)`       | **TBI**: Returns an array of samples in a pack.    |
-|   ⬜️   | `playClickSound(name)`                    | **TBI**: Plays a fallback click sound immediately. |
-
-### Sound Types Supported
-
-- `'kick'`
-- `'snare'`
-- `'hihat_closed'`
-- `'hihat_open'`
-- `'perc'`
-- `'shaker'`
-- `'accent'` (maps to `kick`)
-- `'normal'` (maps to `hihat_closed` by default)
-
----
-
-## 🚀 Future Plans
-
-- [x] **Core Audio Engine**
-    - [x] Implement `init()` to pre-load samples into memory.
-    - [x] Implement `scheduleSound()` for precise WebAudio scheduling.
-    - [x] Implement `getVolume()`.
-    - [x] Add proper gain staging and velocity support.
-- [ ] **Sample Management**
-    - [ ] Implement `getAvailableSampleCategories()`, `getSamplePacksForCategory()`, `getSamplesForPack()`.
-    - [ ] Implement `playClickSound()` for immediate click playback.
-    - [ ] Implement kit switching via `getSampleConfig(kitName)`.
-    - [ ] Add a basic (headless) sample browser.
-- [ ] **Advanced Features**
-    - [x] Support configurable sample paths via `setSampleBasePath()`.
-    - [ ] Add MIDI trigger support.
-    - [ ] Allow routing to other WebAudio nodes (for FX chains).
-    - [ ] Implement event listeners (e.g., `onSampleLoad`).
-
----
+HOLD
 
 ## 🤝 Contributing
 
-We welcome:
-
-- Community kits (CC0/Free/Open)
-- Bug fixes, suggestions, and improvements
-- Refactoring or general feedback
-
-> Please ensure samples are under 1MB each and licensed appropriately.
+HOLD
 
 ---
 
@@ -179,43 +123,6 @@ soundonika/
         |                                     V
         |                    Plays via WebAudio with precise timing
 ```
-
----
-
-## 🔧 Implementation Status
-
-### ✅ Completed (Ready for Production Use)
-
-- ✅ Basic class structure and constructor with options' support
-- ✅ Sample index loading and management
-- ✅ **Complete `init()` method with sample preloading**
-- ✅ **Precise `scheduleSound()` method for WebAudio timing**
-- ✅ **Volume control with `setVolume()` and `getVolume()`**
-- ✅ **Mode switching between samples and clicks**
-- ✅ **WebAudio-based sample playback with velocity support**
-- ✅ **Oscillator-based click sound generation**
-- ✅ **Configurable sample paths via `setSampleBasePath()`**
-- ✅ **Global namespace export (`window.Soundonika = { Engine }`)**
-- ✅ **Proper error handling and validation**
-- ✅ **Sound type mapping (accent → kick, normal → hihat_closed)**
-- ✅ **Audio graph with master gain and compressor**
-- ✅ **Sample caching and memory management**
-- ✅ **Loading progress tracking**
-- ✅ HTML5 Audio sample preview (for demo)
-
-### ⬜️ To Be Implemented (TBI)
-
-- **Sample Browsing API:**
-    - `getAvailableSampleCategories()` - extract from loaded sample index
-    - `getSamplePacksForCategory(category)` - return packs for category
-    - `getSamplesForPack(category, pack)` - return samples in pack
-    - `playClickSound(name)` - immediate click playback (vs. scheduled)
-
-- **Enhanced Features:**
-    - Kit switching functionality
-    - Event system for notifications (onSampleLoad, onError, etc.)
-    - MIDI trigger support
-    - FX chain routing support
 
 ---
 
